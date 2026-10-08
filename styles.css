@@ -129,7 +129,7 @@ input:focus-visible, select:focus-visible, .btn:focus-visible, .chips label:focu
 .chips label:has(input:checked) { background: var(--accent); color: var(--accent-ink); }
 .chips label:active { transform: scale(.97); }
 
-.segmented { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.segmented { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .segmented input { position: absolute; opacity: 0; pointer-events: none; }
 .segmented label { cursor: pointer; }
 .segmented span {
@@ -139,6 +139,8 @@ input:focus-visible, select:focus-visible, .btn:focus-visible, .chips label:focu
 }
 .segmented label:has(input:checked) span { background: var(--ink); color: var(--bg); }
 .segmented label:has(input:checked) small { color: inherit; opacity: .75; }
+.segmented .no-mercy:has(input:checked) span { background: var(--no); border-color: var(--line); color: #fff; }
+.segmented label:has(input:disabled) { cursor: not-allowed; opacity: .4; }
 
 .form-error { color: var(--no); font-weight: 700; margin: 0; }
 .hint { margin: 0; padding: 10px 12px; border-radius: 10px; background: var(--track); font-size: .92rem; }
@@ -281,6 +283,7 @@ input:focus-visible, select:focus-visible, .btn:focus-visible, .chips label:focu
 }
 @media (max-width: 520px) {
   .row, .row-3 { grid-template-columns: 1fr; }
+  .segmented { grid-template-columns: repeat(2, 1fr); }
   .card { padding: 16px; }
   .days { gap: 4px; }
   .day-labels { gap: 4px; }

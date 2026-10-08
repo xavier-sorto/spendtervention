@@ -1,6 +1,6 @@
 /*
  * Roast engine.
- * Every line has a tier: 1 = mild, 2 = spicy, 3 = dark.
+ * Every line has a tier: 1 = mild, 2 = spicy, 3 = dark, 4 = no mercy (uncensored).
  * Lines at or below the user's chosen intensity are eligible; lines that
  * match the intensity exactly are weighted higher so "Dark" actually feels dark.
  *
@@ -118,8 +118,85 @@
     ],
   };
 
+  // Tier 4: "No Mercy". Uncensored. Kept in one block so it's easy to tune.
+  // Rule of thumb: roast choices (spending, love life, job, goals, the sore spot
+  // they picked), never identity (race, religion, sexuality, disability, body).
+  const NO_MERCY = {
+    relationship: {
+      single: [
+        "Buy the fucking {item}. It'll be the only thing that's ever gone home with you.",
+        "Your dating profile says 'financially stable.' Biggest lie on the app, and you're on the app a LOT.",
+      ],
+      dating: [
+        "Spend {cost} on this and your next date gets to watch you 'forget your wallet' for the third fucking time.",
+        "They're not ghosting you because you're busy. They're ghosting you because you're broke. Put it down.",
+      ],
+      relationship: ["Your partner is one more {item} away from realizing they could do so much fucking better."],
+      married: ["Your spouse said 'for poorer,' not 'watch me set our shit on fire one {item} at a time.'"],
+      complicated: ["Your situationship won't commit, your bank account won't recover, and you want a fucking {item}?"],
+    },
+    living: {
+      parents: [
+        "Your parents had a kid so someone would take care of them someday. Look how that's going.",
+        "You pay zero rent and you're STILL broke? That takes real fucking talent.",
+      ],
+      roommates: ["Your roommates already talk shit about you in the group chat you're not in. Don't hand them new material."],
+      alone: ["Go ahead. Maybe the delivery driver will be the human contact you've been missing."],
+      partner: ["Your partner is going to see this charge and start quietly looking at apartments."],
+    },
+    work: {
+      student: ["You're paying thousands to learn things and still haven't learned the word 'no.' Fucking incredible."],
+      employed: ["You sold 40 hours of your one life for that paycheck and you want to blow it on a {item}? Clown shit."],
+      freelance: ["Your 'personal brand' is unpaid invoices and impulse buys. Get a fucking accountant. Oh wait, you can't afford one."],
+      unemployed: ["No job, no savings, and a {item} in your cart. You're not a customer, you're a warning label."],
+    },
+    age: {
+      "18-24": ["You're young enough to fix this and dumb enough to buy a {item} anyway."],
+      "25-34": ["Your friends are buying houses and having kids. You're buying a fucking {item}. Let that marinate."],
+      "35-44": ["Halfway through life with nothing saved and you're reaching for a {item}? Bold fucking strategy."],
+      "45+": ["Retirement is coming whether your savings are or not. Spoiler: they're fucking not."],
+    },
+    weakness: [
+      "You told us {category} is your weakness and here you are, {cost} deep, like a fucking moth to a lamp.",
+      "Another {category} purchase. You don't have a budget, you have a habit with a spreadsheet.",
+    ],
+    goal: [
+      "You'll {goal} the same year your ex regrets leaving you. So, never.",
+      "'{goal}' isn't a goal anymore, it's a fucking fantasy. Like you having savings.",
+    ],
+    sore: [
+      "We were going to roast you about '{sore}', but your bank statement beat us to it.",
+      "'{sore}' is already a mess. Want to add 'broke as shit' to the list?",
+      "You can't fix '{sore}' with a {item}, you absolute walking clearance rack.",
+    ],
+    over: ["{over} over budget. You're not bad with money, you're a fucking natural disaster."],
+    generic: [
+      "Put the {item} down and back away slowly, you financially illiterate goblin.",
+      "Your bank account has seen more disappointment than your parents at your graduation.",
+      "Buy it and die broke, alone, and surrounded by shit you didn't need.",
+      "This is how you end up 60, eating cereal for dinner, wondering where it all went. It went HERE, dumbass.",
+    ],
+  };
+
+  // Merge No Mercy lines into the pools as tier 4.
+  (function merge(src, dest) {
+    for (const key of Object.keys(src)) {
+      if (Array.isArray(src[key])) {
+        dest[key] = (dest[key] || []).concat(src[key].map((t) => [4, t]));
+      } else {
+        dest[key] = dest[key] || {};
+        merge(src[key], dest[key]);
+      }
+    }
+  })(NO_MERCY, POOLS);
+
   const HEADLINES = {
-    no: { 1: ["Nope.", "Not today."], 2: ["NO.", "Absolutely not."], 3: ["ABSOLUTELY NOT.", "NO. JUST NO."] },
+    no: {
+      1: ["Nope.", "Not today."],
+      2: ["NO.", "Absolutely not."],
+      3: ["ABSOLUTELY NOT.", "NO. JUST NO."],
+      4: ["HELL NO.", "ABSOLUTELY FUCKING NOT.", "ARE YOU SHITTING ME?"],
+    },
     yes: ["Fine. Buy it.", "Approved.", "You can afford it."],
   };
 
@@ -127,9 +204,16 @@
     1: ["Treat yourself. Responsibly."],
     2: ["Don't let it go to your head.", "Enjoy it. We're watching."],
     3: ["Approved. Don't make it weird.", "Fine. But we're keeping the receipt in our heart."],
+    4: ["Fine. Buy your shit. Don't make us regret this.", "Approved. Shocking, honestly. Don't get fucking used to it."],
   };
 
   let lastRoast = "";
+
+  // Under-18 profiles never get No Mercy, even if an old save says otherwise.
+  function profileIntensity(profile) {
+    const n = Number(profile.intensity) || 2;
+    return profile.age === "u18" ? Math.min(n, 3) : n;
+  }
 
   const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
@@ -154,7 +238,7 @@
    * ctx: { item, cost, over, category, categoryLabel, isWeakness }
    */
   function roast(profile, ctx) {
-    const intensity = Number(profile.intensity) || 2;
+    const intensity = profileIntensity(profile);
     const vars = {
       name: profile.name || "friend",
       item: ctx.item,
@@ -176,7 +260,7 @@
       [POOLS.generic, 0.6],
     ];
     if (ctx.isWeakness) sources.push([POOLS.weakness, 3]);
-    if (profile.sore) sources.push([POOLS.sore, 2]);
+    if (profile.sore) sources.push([POOLS.sore, intensity === 4 ? 3.5 : 2]);
     if (ctx.over) sources.push([POOLS.over, 1.5]);
 
     const candidates = [];
@@ -184,7 +268,8 @@
       if (!lines) continue;
       for (const [tier, text] of lines) {
         if (tier > intensity) continue;
-        const weight = bonus * (tier === intensity ? 3 : 1);
+        // No Mercy leans hard on its own lines instead of drifting back to tamer ones.
+        const weight = bonus * (tier === intensity ? (intensity === 4 ? 6 : 3) : 1);
         candidates.push({ text: fill(text, vars), weight });
       }
     }
@@ -199,7 +284,7 @@
   }
 
   function approve(profile) {
-    const intensity = Number(profile.intensity) || 2;
+    const intensity = profileIntensity(profile);
     return { headline: pick(HEADLINES.yes), quip: pick(YES_QUIPS[intensity]) };
   }
 

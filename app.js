@@ -116,7 +116,17 @@
     for (const key of ["name", "age", "relationship", "living", "work", "goal", "sore"]) f[key].value = p[key] || "";
     for (const box of profileForm.querySelectorAll('[name="weaknesses"]')) box.checked = p.weaknesses.includes(box.value);
     for (const r of profileForm.querySelectorAll('[name="intensity"]')) r.checked = r.value === String(p.intensity);
+    syncNoMercy();
   }
+
+  // No Mercy is 18+: lock it out when the age is under 18.
+  function syncNoMercy() {
+    const radio = profileForm.querySelector('[name="intensity"][value="4"]');
+    const minor = profileForm.elements.age.value === "u18";
+    radio.disabled = minor;
+    if (minor && radio.checked) profileForm.querySelector('[name="intensity"][value="3"]').checked = true;
+  }
+  profileForm.elements.age.addEventListener("change", syncNoMercy);
 
   profileForm.addEventListener("submit", (e) => {
     e.preventDefault();

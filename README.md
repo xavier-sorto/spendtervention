@@ -2,7 +2,7 @@
 
 A budget tracker that roasts you when you try to buy something you can't afford.
 
-1. **Tell us about yourself:** love life, living situation, work, spending weaknesses, savings goal, an optional sore spot, and how hard you want to be roasted (Mild / Spicy / Dark).
+1. **Tell us about yourself:** love life, living situation, work, spending weaknesses, savings goal, an optional sore spot, and how hard you want to be roasted (Mild / Spicy / Dark / No Mercy). No Mercy is uncensored and unavailable if you pick "Under 18".
 2. **Set budgets:** weekly and monthly fun-money limits.
 3. **Dashboard:** week and month progress bars, a day-by-day chart for the week, stats, and a spending log.
 4. **"Should I buy it?":** enter an item and price. If it fits your budget, you get approval. If it doesn't, you get a **NO** and a personalized roast built from your answers.
@@ -14,7 +14,7 @@ A budget tracker that roasts you when you try to buy something you can't afford.
 - **NO** if it's in one of your "weakness" categories and would eat more than half of what's left this week.
 - Otherwise **YES**.
 
-Roast lines live in `roasts.js`, grouped by profile answer and tagged 1 (mild), 2 (spicy) or 3 (dark). Add your own there.
+Roast lines live in `roasts.js`, grouped by profile answer and tagged 1 (mild), 2 (spicy) or 3 (dark); the uncensored No Mercy lines are in the `NO_MERCY` block. Add your own there.
 
 ## Run locally
 
