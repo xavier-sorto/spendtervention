@@ -314,7 +314,7 @@
 
   checkForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    const item = checkForm.elements.item.value.trim();
+    const item = checkForm.elements.itemName.value.trim();
     const cost = parseFloat(checkForm.elements.cost.value);
     const category = checkForm.elements.category.value;
     if (!item) return showError(checkForm, "What are you trying to buy? Don't be shy.");
@@ -411,11 +411,11 @@
     const open = logForm.classList.toggle("hidden") === false;
     logToggle.setAttribute("aria-expanded", String(open));
     logToggle.textContent = open ? "Cancel" : "+ Log a purchase";
-    if (open) logForm.elements.item.focus();
+    if (open) logForm.elements.itemName.focus();
   });
   logForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    const item = logForm.elements.item.value.trim();
+    const item = logForm.elements.itemName.value.trim();
     const cost = parseFloat(logForm.elements.cost.value);
     if (!item || !(cost > 0)) return;
     state.purchases.push({ id: uid(), item, cost, category: logForm.elements.category.value, date: new Date().toISOString(), ignoredAdvice: false });
