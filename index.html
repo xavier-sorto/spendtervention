@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Spendtervention</title>
+  <meta name="description" content="A budget tracker that roasts you when you try to buy something you can't afford." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">$</span>
+      <span class="brand-name">Spendtervention</span>
+    </div>
+    <button id="settings-btn" class="btn btn-ghost hidden" type="button">Settings</button>
+  </header>
+
+  <main id="app">
+    <!-- STEP 1: PERSONAL LIFE -->
+    <section id="view-profile" class="view hidden" aria-labelledby="profile-title">
+      <p class="step-tag">Step 1 of 2</p>
+      <h1 id="profile-title">Tell us about yourself.</h1>
+      <p class="lede">Be honest. We'll use this against you later. (Lovingly.)</p>
+
+      <form id="profile-form" class="card form" novalidate>
+        <label class="field">
+          <span>What should we call you?</span>
+          <input name="name" type="text" maxlength="30" placeholder="e.g. Jordan" required />
+        </label>
+
+        <div class="row">
+          <label class="field">
+            <span>Age range</span>
+            <select name="age" required>
+              <option value="" disabled selected>Pick one</option>
+              <option value="u18">Under 18</option>
+              <option value="18-24">18–24</option>
+              <option value="25-34">25–34</option>
+              <option value="35-44">35–44</option>
+              <option value="45+">45+</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Love life</span>
+            <select name="relationship" required>
+              <option value="" disabled selected>Pick one</option>
+              <option value="single">Single</option>
+              <option value="dating">Dating / talking to someone</option>
+              <option value="relationship">In a relationship</option>
+              <option value="married">Married</option>
+              <option value="complicated">It's complicated</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="row">
+          <label class="field">
+            <span>Living situation</span>
+            <select name="living" required>
+              <option value="" disabled selected>Pick one</option>
+              <option value="parents">With my parents</option>
+              <option value="roommates">With roommates</option>
+              <option value="alone">Alone</option>
+              <option value="partner">With my partner</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Work situation</span>
+            <select name="work" required>
+              <option value="" disabled selected>Pick one</option>
+              <option value="student">Student</option>
+              <option value="employed">Employed</option>
+              <option value="freelance">Freelance / gig work</option>
+              <option value="unemployed">Between jobs</option>
+            </select>
+          </label>
+        </div>
+
+        <fieldset class="field">
+          <legend>Where does your money mysteriously go? <small>(pick any)</small></legend>
+          <div id="weakness-options" class="chips"></div>
+        </fieldset>
+
+        <label class="field">
+          <span>What are you supposedly saving for?</span>
+          <select name="goal" required>
+            <option value="" disabled selected>Pick one</option>
+            <option value="move out">Moving out</option>
+            <option value="pay off your debt">Paying off debt</option>
+            <option value="build an emergency fund">An emergency fund</option>
+            <option value="buy a car">A car</option>
+            <option value="travel the world">Travel</option>
+            <option value="retire someday">Retiring someday</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>A sore spot we're allowed to poke <small>(optional)</small></span>
+          <input name="sore" type="text" maxlength="60" placeholder="e.g. my dating life, my hairline, my fantasy league" />
+        </label>
+
+        <fieldset class="field">
+          <legend>Roast intensity</legend>
+          <div class="segmented">
+            <label><input type="radio" name="intensity" value="1" /><span>Mild<small>gentle nudge</small></span></label>
+            <label><input type="radio" name="intensity" value="2" checked /><span>Spicy<small>it'll sting</small></span></label>
+            <label><input type="radio" name="intensity" value="3" /><span>Dark<small>emotional damage</small></span></label>
+          </div>
+        </fieldset>
+
+        <p class="form-error" role="alert" hidden></p>
+        <button class="btn btn-primary" type="submit">Next: set budgets →</button>
+      </form>
+    </section>
+
+    <!-- STEP 2: BUDGETS -->
+    <section id="view-budget" class="view hidden" aria-labelledby="budget-title">
+      <p class="step-tag">Step 2 of 2</p>
+      <h1 id="budget-title">Set your limits.</h1>
+      <p class="lede">How much fun money can you spend? Rent and bills don't count. Snacks do.</p>
+
+      <form id="budget-form" class="card form" novalidate>
+        <div class="row">
+          <label class="field">
+            <span>Weekly budget</span>
+            <div class="money-input"><span>$</span><input name="weekly" type="number" min="1" step="1" inputmode="decimal" placeholder="100" required /></div>
+          </label>
+          <label class="field">
+            <span>Monthly budget</span>
+            <div class="money-input"><span>$</span><input name="monthly" type="number" min="1" step="1" inputmode="decimal" placeholder="400" required /></div>
+          </label>
+        </div>
+        <p id="budget-hint" class="hint" hidden></p>
+        <p class="form-error" role="alert" hidden></p>
+        <div class="actions">
+          <button id="budget-back" class="btn btn-ghost" type="button">← Back</button>
+          <button class="btn btn-primary" type="submit">Start tracking</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section id="view-dashboard" class="view hidden" aria-label="Dashboard">
+      <h1 class="greeting" id="greeting"></h1>
+
+      <div class="grid">
+        <!-- Should I buy it? -->
+        <article class="card check-card">
+          <h2>Should I buy it?</h2>
+          <form id="check-form" class="form" novalidate>
+            <label class="field">
+              <span>What is it?</span>
+              <input name="item" type="text" maxlength="40" placeholder="e.g. limited edition sneakers" required />
+            </label>
+            <div class="row">
+              <label class="field">
+                <span>Price</span>
+                <div class="money-input"><span>$</span><input name="cost" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0.00" required /></div>
+              </label>
+              <label class="field">
+                <span>Category</span>
+                <select name="category" id="check-category" required></select>
+              </label>
+            </div>
+            <p class="form-error" role="alert" hidden></p>
+            <button class="btn btn-primary btn-big" type="submit">Judge me</button>
+          </form>
+
+          <div id="verdict" class="verdict hidden" aria-live="polite">
+            <p class="verdict-headline"></p>
+            <p class="verdict-roast"></p>
+            <ul class="verdict-facts"></ul>
+            <div class="verdict-actions"></div>
+          </div>
+        </article>
+
+        <!-- Budget bars -->
+        <article class="card">
+          <h2>This week</h2>
+          <div class="meter" id="week-meter">
+            <div class="meter-track"><div class="meter-fill"></div></div>
+            <div class="meter-labels"><span class="meter-spent"></span><span class="meter-left"></span></div>
+          </div>
+          <div class="days" id="week-chart" aria-label="Spending by day this week"></div>
+          <p class="chart-note"><span class="pace-swatch" aria-hidden="true"></span> daily pace to stay on budget</p>
+        </article>
+
+        <article class="card">
+          <h2>This month</h2>
+          <div class="meter" id="month-meter">
+            <div class="meter-track"><div class="meter-fill"></div></div>
+            <div class="meter-labels"><span class="meter-spent"></span><span class="meter-left"></span></div>
+          </div>
+          <div class="stats">
+            <div class="stat"><span class="stat-value" id="stat-daily"></span><span class="stat-label">safe to spend per day</span></div>
+            <div class="stat"><span class="stat-value" id="stat-saved"></span><span class="stat-label">saved by walking away</span></div>
+            <div class="stat"><span class="stat-value" id="stat-roasts"></span><span class="stat-label">times roasted</span></div>
+            <div class="stat"><span class="stat-value" id="stat-ignored"></span><span class="stat-label">bought anyway</span></div>
+          </div>
+        </article>
+
+        <!-- Log + history -->
+        <article class="card history-card">
+          <div class="card-head">
+            <h2>Spending log</h2>
+            <button id="log-toggle" class="btn btn-small" type="button" aria-expanded="false">+ Log a purchase</button>
+          </div>
+          <form id="log-form" class="form log-form hidden" novalidate>
+            <div class="row row-3">
+              <label class="field"><span>Item</span><input name="item" type="text" maxlength="40" required /></label>
+              <label class="field"><span>Price</span><div class="money-input"><span>$</span><input name="cost" type="number" min="0.01" step="0.01" inputmode="decimal" required /></div></label>
+              <label class="field"><span>Category</span><select name="category" id="log-category"></select></label>
+            </div>
+            <button class="btn btn-primary" type="submit">Add to log</button>
+          </form>
+          <ul id="history" class="history"></ul>
+          <p id="history-empty" class="empty">Nothing logged yet. Suspiciously responsible.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="settings-dialog" class="card dialog">
+    <h2>Settings</h2>
+    <div class="dialog-actions">
+      <button class="btn" type="button" data-action="edit-profile">Edit personal info</button>
+      <button class="btn" type="button" data-action="edit-budget">Edit budgets</button>
+      <button class="btn btn-danger" type="button" data-action="reset">Reset everything</button>
+      <button class="btn btn-ghost" type="button" data-action="close">Close</button>
+    </div>
+  </dialog>
+
+  <script src="roasts.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
